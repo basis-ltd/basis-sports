@@ -9,15 +9,31 @@ export interface AppConfig {
   };
 }
 
-export default (): AppConfig => ({
-  port: parseInt(process.env.PORT ?? '3000', 10),
-  nodeEnv: process.env.NODE_ENV ?? 'development',
-  corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
-  database: {
-    url: process.env.DATABASE_URL ?? '',
-    synchronize:
-      process.env.NODE_ENV === 'development' &&
-      process.env.TYPEORM_SYNCHRONIZE !== 'false',
-    logging: process.env.TYPEORM_LOGGING === 'true',
-  },
-});
+export default (): AppConfig => {
+  const nodeEnv = process.env.NODE_ENV ?? 'development';
+  const isProduction = nodeEnv === 'production';
+
+  return {
+    port: parseInt(process.env.PORT ?? '3000', 10),
+    nodeEnv,
+    corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+    database: {
+      url: process.env.DATABASE_URL ?? '',
+      synchronize:
+        !isProduction &&
+        nodeEnv === 'development' &&
+        process.env.TYPEORM_SYNCHRONIZE !== 'false',
+      logging: process.env.TYPEORM_LOGGING === 'true',
+    },
+  };
+};
+
+export function validateAppConfig(config: AppConfig): AppConfig {
+  if (!config.database.url) {
+    throw new Error(
+      'DATABASE_URL environment variable is required. Copy server/.env.example to server/.env and configure it.',
+    );
+  }
+
+  return config;
+}

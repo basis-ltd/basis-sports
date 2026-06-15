@@ -13,6 +13,8 @@ export class AuditContextInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<{
       ip?: string;
+      method?: string;
+      url?: string;
       headers: Record<string, string | string[] | undefined>;
     }>();
 
@@ -21,6 +23,8 @@ export class AuditContextInterceptor implements NestInterceptor {
       ip: request.ip,
       userAgent: Array.isArray(userAgent) ? userAgent[0] : userAgent,
       requestId: randomUUID(),
+      method: request.method,
+      path: request.url,
     };
 
     return new Observable((subscriber) => {

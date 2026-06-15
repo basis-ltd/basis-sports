@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -15,6 +16,7 @@ import { Tournament } from '../tournament/tournament.entity';
 
 @Auditable()
 @Entity('seasons')
+@Index(['tournamentId'])
 export class Season {
   @PrimaryGeneratedColumn()
   id: number;

@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { isAuditableEntity } from '../common/decorators/auditable.decorator';
 import { AuditAction } from '../common/enums';
+import { sanitizeEntity } from '../common/utils/sanitize-entity';
 import { AuditLog } from './audit-log.entity';
 import { AuditService } from './audit.service';
 
@@ -74,8 +75,8 @@ export class AuditSubscriber implements EntitySubscriberInterface {
       action,
       entityName,
       entityId,
-      oldEntity ? this.sanitizeEntity(oldEntity) : null,
-      newEntity ? this.sanitizeEntity(newEntity) : null,
+      oldEntity ? sanitizeEntity(oldEntity) : null,
+      newEntity ? sanitizeEntity(newEntity) : null,
     );
   }
 
@@ -84,24 +85,4 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     return typeof id === 'number' ? id : null;
   }
 
-  private sanitizeEntity(entity: object): Record<string, unknown> {
-    const sanitized: Record<string, unknown> = {};
-
-    for (const [key, value] of Object.entries(entity)) {
-      if (typeof value === 'function') {
-        continue;
-      }
-
-      if (value instanceof Date) {
-        sanitized[key] = value.toISOString();
-        continue;
-      }
-
-      if (value !== undefined) {
-        sanitized[key] = value as unknown;
-      }
-    }
-
-    return sanitized;
-  }
 }

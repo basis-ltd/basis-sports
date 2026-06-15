@@ -9,4 +9,14 @@ export class TournamentService {
     @InjectRepository(Tournament)
     private readonly tournamentRepository: Repository<Tournament>,
   ) {}
+
+  findAll(): Promise<Tournament[]> {
+    return this.tournamentRepository.find({
+      order: { name: 'ASC' },
+    });
+  }
+
+  findById(id: number): Promise<Tournament | null> {
+    return this.tournamentRepository.findOne({ where: { id } });
+  }
 }

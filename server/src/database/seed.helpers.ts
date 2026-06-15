@@ -1,5 +1,6 @@
 import { Repository } from 'typeorm';
 import { AuditLog } from '../audit/audit-log.entity';
+import { sanitizeEntity } from '../common/utils/sanitize-entity';
 import {
   AuditAction,
   EventOutcome,
@@ -149,27 +150,6 @@ export function generatePlayerMatchStat(
     distanceCoveredM: round(randomBetween(8000, 11500)),
     xg: round(goals * 0.4 + shots * 0.08),
   };
-}
-
-export function sanitizeEntity(entity: object): Record<string, unknown> {
-  const sanitized: Record<string, unknown> = {};
-
-  for (const [key, value] of Object.entries(entity)) {
-    if (typeof value === 'function') {
-      continue;
-    }
-
-    if (value instanceof Date) {
-      sanitized[key] = value.toISOString();
-      continue;
-    }
-
-    if (value !== undefined) {
-      sanitized[key] = value as unknown;
-    }
-  }
-
-  return sanitized;
 }
 
 export async function bulkAuditCreate(

@@ -20,7 +20,6 @@ import dataSource from './data-source';
 import {
   GROUPS,
   MATCH_FIXTURES,
-  STAR_PLAYERS,
   TOURNAMENT_NAME,
   buildDefaultPlayers,
 } from './seed-data';
@@ -32,13 +31,6 @@ import {
   generatePlayerMatchStat,
   randomInt,
 } from './seed.helpers';
-
-const STAR_PLAYER_NAMES = new Set(
-  Object.values(STAR_PLAYERS)
-    .flat()
-    .filter((p) => p.isStar)
-    .map((p) => p.name),
-);
 
 const INSERT_CHUNK_SIZE = 500;
 
@@ -77,6 +69,10 @@ async function clearExistingSeedData(
   }
 
   console.log('Clearing existing FIFA World Cup 2026 seed data...');
+  await dataSource.query(
+    `DELETE FROM audit_logs WHERE metadata->>'requestId' = $1`,
+    [SEED_METADATA.requestId],
+  );
   await dataSource.query(`
     TRUNCATE TABLE
       match_events,
@@ -85,18 +81,17 @@ async function clearExistingSeedData(
       players,
       teams,
       seasons,
-      tournaments,
-      audit_logs
+      tournaments
     RESTART IDENTITY CASCADE
   `);
 }
 
-function getEventBudget(playerName: string): number {
+function getEventBudget(playerName: string, isStar: boolean): number {
   if (playerName === 'Lionel Messi') {
     return 250;
   }
 
-  if (STAR_PLAYER_NAMES.has(playerName)) {
+  if (isStar) {
     return 180;
   }
 
@@ -176,6 +171,7 @@ async function seed(): Promise<void> {
       console.log('Creating players (5 per team)...');
       const players: Player[] = [];
       const playersByTeam = new Map<number, Player[]>();
+      const playerStarMap = new Map<number, boolean>();
 
       for (const team of teams) {
         const teamData = GROUPS.flat().find((t) => t.shortName === team.shortName)!;
@@ -197,6 +193,7 @@ async function seed(): Promise<void> {
           );
           players.push(player);
           teamPlayers.push(player);
+          playerStarMap.set(player.id, template.isStar ?? false);
         }
 
         playersByTeam.set(team.id, teamPlayers);
@@ -246,7 +243,10 @@ async function seed(): Promise<void> {
 
           for (const player of squad) {
             const existingTotal = playerEventTotals.get(player.id) ?? 0;
-            const maxEvents = getEventBudget(player.name);
+            const maxEvents = getEventBudget(
+              player.name,
+              playerStarMap.get(player.id) ?? false,
+            );
 
             if (existingTotal >= maxEvents) {
               continue;

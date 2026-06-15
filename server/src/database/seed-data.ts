@@ -212,7 +212,7 @@ export function buildDefaultPlayers(team: SeedTeam): SeedPlayerTemplate[] {
     heightCm: 175 + index * 2,
     weightKg: 70 + index * 2,
     preferredFoot: index % 2 === 0 ? 'right' : 'left',
-    isStar: index === POSITION_POOL.length - 1,
+    isStar: index === 4,
   }));
 }
 
