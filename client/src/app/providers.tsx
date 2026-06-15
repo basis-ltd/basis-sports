@@ -1,16 +1,13 @@
-import type { ReactNode } from 'react'
 import { Provider } from 'react-redux'
-import { store } from '@/store/store'
+import { AuthBootstrap } from '@/components/auth/AuthBootstrap'
 import { AppRoutes } from '@/routes'
+import { store } from '@/store/store'
 
-type ProvidersProps = {
-  children?: ReactNode
-}
-
-export function Providers({ children }: ProvidersProps) {
+export function Providers() {
   return (
     <Provider store={store}>
-      <AppRoutes>{children}</AppRoutes>
+      <AuthBootstrap />
+      <AppRoutes />
     </Provider>
   )
 }

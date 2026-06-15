@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+@import "@fontsource/instrument-serif/400.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -42,7 +43,9 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-heading: var(--font-sans);
+  --font-display: 'Instrument Serif', Georgia, serif;
   --font-sans: 'Geist Variable', sans-serif;
+  --color-heat-warm: var(--heat-warm);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
@@ -81,6 +84,7 @@
   --sidebar-accent-foreground: oklch(0.3 0.08 145);
   --sidebar-border: oklch(0.88 0.03 145);
   --sidebar-ring: oklch(0.55 0.12 145);
+  --heat-warm: oklch(0.62 0.16 55);
 }
 
 .dark {
@@ -126,5 +130,22 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .landing-section {
+    @apply px-6 py-20 md:px-8 md:py-28;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zone-reveal {
+      animation: none !important;
+      opacity: 1 !important;
+    }
   }
 }
