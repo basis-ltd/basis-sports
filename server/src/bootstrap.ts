@@ -30,6 +30,7 @@ export function configureApp(app: INestApplication): void {
     .setTitle('basis-sports API')
     .setDescription('Football analytics platform API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

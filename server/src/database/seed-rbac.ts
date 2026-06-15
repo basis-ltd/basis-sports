@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import { DataSource, Repository } from 'typeorm';
 import { auditContextStorage } from '../common/audit-context.storage';
 import { Permission } from '../modules/user-management/permission.entity';
@@ -11,6 +12,8 @@ import {
   SEED_ROLES,
   SEED_USERS,
 } from './seed-rbac-data';
+
+const BCRYPT_ROUNDS = 12;
 
 async function upsertPermissions(
   permissionRepo: Repository<Permission>,
@@ -72,6 +75,10 @@ async function upsertUsers(
   userRepo: Repository<User>,
 ): Promise<Map<string, User>> {
   const usersByEmail = new Map<string, User>();
+  const seedPassword = process.env.SEED_USER_PASSWORD;
+  const passwordHash = seedPassword
+    ? await bcrypt.hash(seedPassword, BCRYPT_ROUNDS)
+    : null;
 
   for (const seedUser of SEED_USERS) {
     let user = await userRepo.findOne({ where: { email: seedUser.email } });
@@ -83,12 +90,16 @@ async function upsertUsers(
           firstName: seedUser.firstName,
           lastName: seedUser.lastName,
           isActive: true,
+          passwordHash,
         }),
       );
     } else {
       user.firstName = seedUser.firstName;
       user.lastName = seedUser.lastName;
       user.isActive = true;
+      if (passwordHash) {
+        user.passwordHash = passwordHash;
+      }
       user = await userRepo.save(user);
     }
 
@@ -164,4 +175,7 @@ export async function seedRbac(dataSource: DataSource): Promise<void> {
   console.log(`  Permissions: ${permissionsByCode.size}`);
   console.log(`  Roles:       ${rolesByName.size}`);
   console.log(`  Users:       ${usersByEmail.size}`);
+  if (process.env.SEED_USER_PASSWORD) {
+    console.log('  Seed user passwords set (SEED_USER_PASSWORD)');
+  }
 }

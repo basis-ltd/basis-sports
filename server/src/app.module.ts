@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuditModule } from './audit/audit.module';
+import { AuthModule } from './common/auth/auth.module';
 import { AppConfigModule } from './config/config.module';
 import { typeOrmConfigFactory } from './config/database.config';
 import { HealthModule } from './health/health.module';
@@ -18,6 +19,7 @@ import { UserManagementModule } from './modules/user-management/user-management.
 @Module({
   imports: [
     AppConfigModule,
+    AuthModule,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: typeOrmConfigFactory,

@@ -9,6 +9,7 @@ import { Player } from '../modules/player/player.entity';
 import { Season } from '../modules/season/season.entity';
 import { Team } from '../modules/team/team.entity';
 import { Tournament } from '../modules/tournament/tournament.entity';
+import { PasswordResetToken } from '../modules/auth/entities/password-reset-token.entity';
 import { Permission } from '../modules/user-management/permission.entity';
 import { RolePermission } from '../modules/user-management/role-permission.entity';
 import { Role } from '../modules/user-management/role.entity';
@@ -40,6 +41,7 @@ export default new DataSource({
     PlayerMatchStat,
     AuditLog,
     User,
+    PasswordResetToken,
     Role,
     Permission,
     UserRole,
