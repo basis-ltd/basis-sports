@@ -1,45 +1,45 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import {
   ArrayNotEmpty,
   IsArray,
   IsEnum,
-  IsInt,
   IsOptional,
-  Min,
+  IsUUID,
 } from 'class-validator';
 import { MatchEventType } from '../../../common/enums';
 
 export class GetHeatmapQueryDto {
-  @ApiProperty({ example: 1 })
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  playerId: number;
+  @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
+  @IsUUID()
+  playerId: string;
 
-  @ApiProperty({ example: 1 })
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  seasonId: number;
+  @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440001' })
+  @IsUUID()
+  seasonId: string;
 
-  @ApiProperty({ type: [Number], example: [1, 2, 3] })
+  @ApiProperty({
+    type: [String],
+    example: [
+      '550e8400-e29b-41d4-a716-446655440002',
+      '550e8400-e29b-41d4-a716-446655440003',
+    ],
+  })
   @Transform(({ value }) => {
     if (Array.isArray(value)) {
-      return value.map((item) => Number(item));
+      return value.map((item) => String(item));
     }
 
     if (typeof value === 'string') {
-      return value.split(',').map((item) => Number(item.trim()));
+      return value.split(',').map((item) => item.trim());
     }
 
-    return [Number(value)];
+    return [String(value)];
   })
   @IsArray()
   @ArrayNotEmpty()
-  @IsInt({ each: true })
-  @Min(1, { each: true })
-  matchIds: number[];
+  @IsUUID('4', { each: true })
+  matchIds: string[];
 
   @ApiPropertyOptional({ enum: MatchEventType, isArray: true })
   @IsOptional()

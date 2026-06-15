@@ -16,7 +16,7 @@ export class TournamentService {
     });
   }
 
-  findById(id: number): Promise<Tournament | null> {
+  findById(id: string): Promise<Tournament | null> {
     return this.tournamentRepository.findOne({ where: { id } });
   }
 }

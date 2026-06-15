@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { Match } from './match.entity';
 
 export interface FindMatchesOptions {
-  seasonId?: number;
-  teamId?: number;
+  seasonId?: string;
+  teamId?: string;
 }
 
 @Injectable()
@@ -39,7 +39,7 @@ export class MatchService {
     return query.getMany();
   }
 
-  findByIds(ids: number[]): Promise<Match[]> {
+  findByIds(ids: string[]): Promise<Match[]> {
     if (ids.length === 0) {
       return Promise.resolve([]);
     }

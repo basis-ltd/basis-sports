@@ -1,7 +1,12 @@
+const SENSITIVE_FIELDS = new Set(['passwordHash']);
+
 export function sanitizeEntity(entity: object): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(entity)) {
+    if (SENSITIVE_FIELDS.has(key)) {
+      continue;
+    }
     if (typeof value === 'function') {
       continue;
     }

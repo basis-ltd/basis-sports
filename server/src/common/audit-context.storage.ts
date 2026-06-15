@@ -6,6 +6,7 @@ export interface AuditContext {
   requestId?: string;
   method?: string;
   path?: string;
+  userId?: string;
 }
 
 export const auditContextStorage = new AsyncLocalStorage<AuditContext>();

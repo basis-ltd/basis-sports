@@ -80,9 +80,9 @@ export class AuditSubscriber implements EntitySubscriberInterface {
     );
   }
 
-  private extractEntityId(entity: object): number | null {
+  private extractEntityId(entity: object): string | null {
     const id = (entity as { id?: unknown }).id;
-    return typeof id === 'number' ? id : null;
+    return typeof id === 'string' ? id : null;
   }
 
 }

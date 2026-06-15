@@ -1,7 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule } from '@nestjs/config';
-import configuration, { AppConfig, validateAppConfig } from './configuration';
+import configuration, { validateAppConfig } from './configuration';
 import { getEnvFilePath } from './env-path';
+
+function mergeEnvConfigIntoProcess(envConfig: Record<string, unknown>): void {
+  for (const [key, value] of Object.entries(envConfig)) {
+    if (typeof value === 'string' && !(key in process.env)) {
+      process.env[key] = value;
+    }
+  }
+}
 
 @Module({
   imports: [
@@ -9,7 +17,10 @@ import { getEnvFilePath } from './env-path';
       isGlobal: true,
       load: [configuration],
       envFilePath: [getEnvFilePath(), '.env'],
-      validate: (config) => validateAppConfig(config as AppConfig),
+      validate: (envConfig: Record<string, unknown>) => {
+        mergeEnvConfigIntoProcess(envConfig);
+        return validateAppConfig(configuration());
+      },
     }),
   ],
 })

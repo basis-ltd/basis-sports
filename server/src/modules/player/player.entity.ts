@@ -1,15 +1,13 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Auditable } from '../../common/decorators/auditable.decorator';
+import { BaseEntity } from '../../common/entities/base.entity';
 import { PlayerPosition } from '../../common/enums';
 import { MatchEvent } from '../match-event/match-event.entity';
 import { PlayerMatchStat } from '../player-match-stat/player-match-stat.entity';
@@ -18,10 +16,7 @@ import { Team } from '../team/team.entity';
 @Auditable()
 @Entity('players')
 @Index(['currentTeamId'])
-export class Player {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Player extends BaseEntity {
   @Column()
   name: string;
 
@@ -46,8 +41,8 @@ export class Player {
   @Column({ name: 'photo_url', nullable: true })
   photoUrl: string;
 
-  @Column({ name: 'current_team_id', nullable: true })
-  currentTeamId: number;
+  @Column({ name: 'current_team_id', type: 'uuid', nullable: true })
+  currentTeamId: string | null;
 
   @ManyToOne(() => Team, (team) => team.players, { nullable: true })
   @JoinColumn({ name: 'current_team_id' })
@@ -58,10 +53,4 @@ export class Player {
 
   @OneToMany(() => PlayerMatchStat, (stat) => stat.player)
   matchStats: PlayerMatchStat[];
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }

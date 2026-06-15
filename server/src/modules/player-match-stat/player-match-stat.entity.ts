@@ -1,14 +1,12 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Auditable } from '../../common/decorators/auditable.decorator';
+import { BaseEntity } from '../../common/entities/base.entity';
 import { Match } from '../match/match.entity';
 import { Player } from '../player/player.entity';
 import { Team } from '../team/team.entity';
@@ -16,26 +14,23 @@ import { Team } from '../team/team.entity';
 @Auditable()
 @Entity('player_match_stats')
 @Index(['matchId', 'playerId'], { unique: true })
-export class PlayerMatchStat {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ name: 'match_id' })
-  matchId: number;
+export class PlayerMatchStat extends BaseEntity {
+  @Column({ name: 'match_id', type: 'uuid' })
+  matchId: string;
 
   @ManyToOne(() => Match, (match) => match.playerMatchStats)
   @JoinColumn({ name: 'match_id' })
   match: Match;
 
-  @Column({ name: 'player_id' })
-  playerId: number;
+  @Column({ name: 'player_id', type: 'uuid' })
+  playerId: string;
 
   @ManyToOne(() => Player, (player) => player.matchStats)
   @JoinColumn({ name: 'player_id' })
   player: Player;
 
-  @Column({ name: 'team_id' })
-  teamId: number;
+  @Column({ name: 'team_id', type: 'uuid' })
+  teamId: string;
 
   @ManyToOne(() => Team, (team) => team.playerMatchStats)
   @JoinColumn({ name: 'team_id' })
@@ -67,10 +62,4 @@ export class PlayerMatchStat {
 
   @Column({ type: 'float', default: 0 })
   xg: number;
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }

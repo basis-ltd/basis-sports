@@ -72,9 +72,9 @@ function getZone(position: PlayerPosition, playerName: string): BoundingBox {
 }
 
 export interface GeneratedMatchEvent {
-  matchId: number;
-  playerId: number;
-  teamId: number;
+  matchId: string;
+  playerId: string;
+  teamId: string;
   eventType: MatchEventType;
   minute: number;
   x: number;
@@ -86,9 +86,9 @@ export interface GeneratedMatchEvent {
 }
 
 export function generatePlayerEvents(
-  matchId: number,
-  playerId: number,
-  teamId: number,
+  matchId: string,
+  playerId: string,
+  teamId: string,
   position: PlayerPosition,
   playerName: string,
   eventCount: number,
@@ -124,9 +124,9 @@ export function generatePlayerEvents(
 }
 
 export function generatePlayerMatchStat(
-  matchId: number,
-  playerId: number,
-  teamId: number,
+  matchId: string,
+  playerId: string,
+  teamId: string,
   position: PlayerPosition,
   events: GeneratedMatchEvent[],
 ) {
@@ -163,7 +163,7 @@ export async function bulkAuditCreate(
     const logs = chunk
       .map((entity) => {
         const entityId = (entity as { id?: unknown }).id;
-        if (typeof entityId !== 'number') {
+        if (typeof entityId !== 'string') {
           return null;
         }
 

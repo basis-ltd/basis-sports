@@ -9,6 +9,11 @@ import { Player } from '../modules/player/player.entity';
 import { Season } from '../modules/season/season.entity';
 import { Team } from '../modules/team/team.entity';
 import { Tournament } from '../modules/tournament/tournament.entity';
+import { Permission } from '../modules/user-management/permission.entity';
+import { RolePermission } from '../modules/user-management/role-permission.entity';
+import { Role } from '../modules/user-management/role.entity';
+import { UserRole } from '../modules/user-management/user-role.entity';
+import { User } from '../modules/user-management/user.entity';
 
 loadEnv({ path: getEnvFilePath() });
 loadEnv();
@@ -34,6 +39,11 @@ export default new DataSource({
     MatchEvent,
     PlayerMatchStat,
     AuditLog,
+    User,
+    Role,
+    Permission,
+    UserRole,
+    RolePermission,
   ],
   synchronize:
     !isProduction &&

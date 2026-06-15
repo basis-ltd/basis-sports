@@ -7,7 +7,7 @@ import { Player } from './player.entity';
 export interface FindPlayersOptions {
   search?: string;
   position?: PlayerPosition;
-  teamId?: number;
+  teamId?: string;
 }
 
 @Injectable()
@@ -44,7 +44,7 @@ export class PlayerService {
     return query.getMany();
   }
 
-  findById(id: number): Promise<Player | null> {
+  findById(id: string): Promise<Player | null> {
     return this.playerRepository.findOne({
       where: { id },
       relations: { currentTeam: true },

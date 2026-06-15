@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Season } from './season.entity';
 
 export interface FindSeasonsOptions {
-  tournamentId?: number;
+  tournamentId?: string;
 }
 
 @Injectable()

@@ -23,7 +23,7 @@ export interface HeatmapResult {
   zones: HeatmapZoneResult[];
   totalActions: number;
   centroid: { x: number; y: number };
-  player: { id: number; name: string; position: string };
+  player: { id: string; name: string; position: string };
   filters: GetHeatmapQueryDto;
 }
 

@@ -1,15 +1,13 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Auditable } from '../../common/decorators/auditable.decorator';
+import { BaseEntity } from '../../common/entities/base.entity';
 import { SeasonStatus } from '../../common/enums';
 import { Match } from '../match/match.entity';
 import { Tournament } from '../tournament/tournament.entity';
@@ -17,12 +15,9 @@ import { Tournament } from '../tournament/tournament.entity';
 @Auditable()
 @Entity('seasons')
 @Index(['tournamentId'])
-export class Season {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ name: 'tournament_id' })
-  tournamentId: number;
+export class Season extends BaseEntity {
+  @Column({ name: 'tournament_id', type: 'uuid' })
+  tournamentId: string;
 
   @ManyToOne(() => Tournament, (tournament) => tournament.seasons)
   @JoinColumn({ name: 'tournament_id' })
@@ -46,10 +41,4 @@ export class Season {
 
   @OneToMany(() => Match, (match) => match.season)
   matches: Match[];
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }

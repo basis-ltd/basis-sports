@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { AuditLog } from '../audit/audit-log.entity';
 import { AuditService } from '../audit/audit.service';
 import { AuditSubscriber } from '../audit/audit.subscriber';
+import { BaseEntitySubscriber } from '../common/subscribers/base-entity.subscriber';
 import { auditContextStorage } from '../common/audit-context.storage';
 import {
   MatchStatus,
@@ -17,6 +18,7 @@ import { Season } from '../modules/season/season.entity';
 import { Team } from '../modules/team/team.entity';
 import { Tournament } from '../modules/tournament/tournament.entity';
 import dataSource from './data-source';
+import { seedRbac } from './seed-rbac';
 import {
   GROUPS,
   MATCH_FIXTURES,
@@ -38,8 +40,8 @@ async function insertInChunks<T extends object>(
   repo: Repository<T>,
   entities: T[],
   chunkSize = INSERT_CHUNK_SIZE,
-): Promise<Array<T & { id: number }>> {
-  const saved: Array<T & { id: number }> = [];
+): Promise<Array<T & { id: string }>> {
+  const saved: Array<T & { id: string }> = [];
 
   for (let i = 0; i < entities.length; i += chunkSize) {
     const chunk = entities.slice(i, i + chunkSize);
@@ -50,7 +52,7 @@ async function insertInChunks<T extends object>(
       .returning('*')
       .execute();
 
-    const rows = (result.raw as Array<T & { id: number }>) ?? [];
+    const rows = (result.raw as Array<T & { id: string }>) ?? [];
     saved.push(...rows);
   }
 
@@ -104,6 +106,7 @@ async function seed(): Promise<void> {
   const auditRepo = dataSource.getRepository(AuditLog);
   const auditService = new AuditService(auditRepo);
   new AuditSubscriber(dataSource, auditService);
+  new BaseEntitySubscriber(dataSource);
 
   const tournamentRepo = dataSource.getRepository(Tournament);
   const seasonRepo = dataSource.getRepository(Season);
@@ -170,8 +173,8 @@ async function seed(): Promise<void> {
 
       console.log('Creating players (5 per team)...');
       const players: Player[] = [];
-      const playersByTeam = new Map<number, Player[]>();
-      const playerStarMap = new Map<number, boolean>();
+      const playersByTeam = new Map<string, Player[]>();
+      const playerStarMap = new Map<string, boolean>();
 
       for (const team of teams) {
         const teamData = GROUPS.flat().find((t) => t.shortName === team.shortName)!;
@@ -232,7 +235,7 @@ async function seed(): Promise<void> {
       console.log('Generating match events and player stats...');
       const pendingEvents: GeneratedMatchEvent[] = [];
       const pendingStats: ReturnType<typeof generatePlayerMatchStat>[] = [];
-      const playerEventTotals = new Map<number, number>();
+      const playerEventTotals = new Map<string, number>();
 
       for (const match of matches) {
         const homeTeam = teams.find((t) => t.id === match.homeTeamId)!;
@@ -297,6 +300,8 @@ async function seed(): Promise<void> {
       console.log(`  Events:      ${savedEvents.length}`);
       console.log(`  Stats:       ${savedStats.length}`);
       console.log(`  Audit logs:  ${await auditRepo.count()}`);
+
+      await seedRbac(dataSource);
     },
   );
 

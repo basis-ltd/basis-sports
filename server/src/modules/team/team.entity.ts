@@ -1,12 +1,6 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Auditable } from '../../common/decorators/auditable.decorator';
+import { BaseEntity } from '../../common/entities/base.entity';
 import { Match } from '../match/match.entity';
 import { MatchEvent } from '../match-event/match-event.entity';
 import { Player } from '../player/player.entity';
@@ -14,10 +8,7 @@ import { PlayerMatchStat } from '../player-match-stat/player-match-stat.entity';
 
 @Auditable()
 @Entity('teams')
-export class Team {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Team extends BaseEntity {
   @Column()
   name: string;
 
@@ -50,10 +41,4 @@ export class Team {
 
   @OneToMany(() => PlayerMatchStat, (stat) => stat.team)
   playerMatchStats: PlayerMatchStat[];
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }

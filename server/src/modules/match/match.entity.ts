@@ -1,15 +1,13 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Auditable } from '../../common/decorators/auditable.decorator';
+import { BaseEntity } from '../../common/entities/base.entity';
 import { MatchStatus } from '../../common/enums';
 import { MatchEvent } from '../match-event/match-event.entity';
 import { PlayerMatchStat } from '../player-match-stat/player-match-stat.entity';
@@ -19,26 +17,23 @@ import { Team } from '../team/team.entity';
 @Auditable()
 @Entity('matches')
 @Index(['seasonId'])
-export class Match {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ name: 'season_id' })
-  seasonId: number;
+export class Match extends BaseEntity {
+  @Column({ name: 'season_id', type: 'uuid' })
+  seasonId: string;
 
   @ManyToOne(() => Season, (season) => season.matches)
   @JoinColumn({ name: 'season_id' })
   season: Season;
 
-  @Column({ name: 'home_team_id' })
-  homeTeamId: number;
+  @Column({ name: 'home_team_id', type: 'uuid' })
+  homeTeamId: string;
 
   @ManyToOne(() => Team, (team) => team.homeMatches)
   @JoinColumn({ name: 'home_team_id' })
   homeTeam: Team;
 
-  @Column({ name: 'away_team_id' })
-  awayTeamId: number;
+  @Column({ name: 'away_team_id', type: 'uuid' })
+  awayTeamId: string;
 
   @ManyToOne(() => Team, (team) => team.awayMatches)
   @JoinColumn({ name: 'away_team_id' })
@@ -74,10 +69,4 @@ export class Match {
 
   @OneToMany(() => PlayerMatchStat, (stat) => stat.match)
   playerMatchStats: PlayerMatchStat[];
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }

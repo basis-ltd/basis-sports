@@ -1,14 +1,12 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Auditable } from '../../common/decorators/auditable.decorator';
+import { BaseEntity } from '../../common/entities/base.entity';
 import {
   EventOutcome,
   MatchEventType,
@@ -24,26 +22,23 @@ import { Team } from '../team/team.entity';
 @Index(['matchId'])
 @Index(['x'])
 @Index(['y'])
-export class MatchEvent {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ name: 'match_id' })
-  matchId: number;
+export class MatchEvent extends BaseEntity {
+  @Column({ name: 'match_id', type: 'uuid' })
+  matchId: string;
 
   @ManyToOne(() => Match, (match) => match.matchEvents)
   @JoinColumn({ name: 'match_id' })
   match: Match;
 
-  @Column({ name: 'player_id' })
-  playerId: number;
+  @Column({ name: 'player_id', type: 'uuid' })
+  playerId: string;
 
   @ManyToOne(() => Player, (player) => player.matchEvents)
   @JoinColumn({ name: 'player_id' })
   player: Player;
 
-  @Column({ name: 'team_id' })
-  teamId: number;
+  @Column({ name: 'team_id', type: 'uuid' })
+  teamId: string;
 
   @ManyToOne(() => Team, (team) => team.matchEvents)
   @JoinColumn({ name: 'team_id' })
@@ -72,10 +67,4 @@ export class MatchEvent {
 
   @Column({ type: 'enum', enum: MatchPeriod })
   period: MatchPeriod;
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }

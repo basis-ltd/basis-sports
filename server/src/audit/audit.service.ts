@@ -15,7 +15,7 @@ export class AuditService {
   async logChange(
     action: AuditAction,
     entityName: string,
-    entityId: number,
+    entityId: string,
     oldValue: Record<string, unknown> | null,
     newValue: Record<string, unknown> | null,
     metadata?: Record<string, unknown>,
@@ -26,6 +26,7 @@ export class AuditService {
       action,
       entityName,
       entityId,
+      userId: context.userId,
       oldValue: oldValue ?? undefined,
       newValue: newValue ?? undefined,
       metadata: {

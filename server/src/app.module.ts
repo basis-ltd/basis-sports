@@ -13,6 +13,7 @@ import { PlayerModule } from './modules/player/player.module';
 import { SeasonModule } from './modules/season/season.module';
 import { TeamModule } from './modules/team/team.module';
 import { TournamentModule } from './modules/tournament/tournament.module';
+import { UserManagementModule } from './modules/user-management/user-management.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TournamentModule } from './modules/tournament/tournament.module';
     MatchEventModule,
     PlayerMatchStatModule,
     HeatmapModule,
+    UserManagementModule,
   ],
 })
 export class AppModule {}

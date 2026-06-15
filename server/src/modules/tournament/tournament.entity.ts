@@ -1,21 +1,12 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Auditable } from '../../common/decorators/auditable.decorator';
+import { BaseEntity } from '../../common/entities/base.entity';
 import { TournamentType } from '../../common/enums';
 import { Season } from '../season/season.entity';
 
 @Auditable()
 @Entity('tournaments')
-export class Tournament {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Tournament extends BaseEntity {
   @Column()
   name: string;
 
@@ -33,10 +24,4 @@ export class Tournament {
 
   @OneToMany(() => Season, (season) => season.tournament)
   seasons: Season[];
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }
